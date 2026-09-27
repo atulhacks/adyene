@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: adyene
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api:app --bind 0.0.0.0:$PORT --workers 2
+    healthCheckPath: /health
