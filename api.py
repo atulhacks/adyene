@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import re
 import json
 import base64
+import os
 import secrets
 from datetime import datetime, timezone
 from cryptography.hazmat.primitives import hashes, serialization
@@ -417,6 +418,15 @@ def brand():
     return jsonify({"success": True, "number": number, "brand": detect_brand(number)}), 200
 
 
+@app.route("/docs", methods=["GET"])
+def docs():
+    docs_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs.html")
+    if not os.path.exists(docs_path):
+        return jsonify({"error": "docs.html not found"}), 404
+    with open(docs_path, "r", encoding="utf-8") as f:
+        return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({
@@ -438,6 +448,7 @@ def index():
             "/pubkey": "fetch publicKey from a clientKey",
             "/parse": "map an Adyen payment response to a decline code",
             "/brand": "detect card brand from a number",
+            "/docs": "this documentation page (html)",
             "/health": "health check",
         },
     }), 200
